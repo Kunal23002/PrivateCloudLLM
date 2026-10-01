@@ -1,0 +1,10 @@
+# Apply all manifests (requires locally built images tagged privatecloudllm/*:demo)
+kubectl apply -f namespace.yaml
+kubectl apply -f redis.yaml
+kubectl apply -f vllm-mock.yaml
+kubectl apply -f gateway.yaml
+kubectl apply -f prometheus.yaml
+kubectl apply -f grafana.yaml
+
+# Optional: port-forward the gateway
+# kubectl -n privatecloudllm port-forward svc/gateway 8000:8000

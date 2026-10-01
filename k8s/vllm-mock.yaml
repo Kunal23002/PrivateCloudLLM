@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vllm-mock
+  namespace: privatecloudllm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vllm-mock
+  template:
+    metadata:
+      labels:
+        app: vllm-mock
+    spec:
+      containers:
+        - name: vllm-mock
+          # Build locally: docker build -t privatecloudllm/vllm-mock:demo ./vllm-mock
+          image: privatecloudllm/vllm-mock:demo
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8001
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8001
+            initialDelaySeconds: 2
+            periodSeconds: 5
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vllm-mock
+  namespace: privatecloudllm
+spec:
+  selector:
+    app: vllm-mock
+  ports:
+    - port: 8001
+      targetPort: 8001
